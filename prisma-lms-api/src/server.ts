@@ -1,0 +1,1 @@
+import {app} from './app'; import {env} from './config/env'; import {connectMongo} from './database/mongo'; connectMongo().then(()=>app.listen(env.port,()=>console.log(`PRISMA LMS API em http://localhost:${env.port} | Swagger /api-docs`))).catch(e=>{console.error(e);process.exit(1)});

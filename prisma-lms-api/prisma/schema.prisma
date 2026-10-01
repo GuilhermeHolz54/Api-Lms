@@ -1,0 +1,163 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  PROFESSOR
+  ALUNO
+}
+enum CourseStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+enum SupportStatus {
+  OPEN
+  IN_PROGRESS
+  CLOSED
+}
+
+model User {
+  id String @id @default(uuid())
+  name String
+  email String @unique
+  password String
+  role Role @default(ALUNO)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  courses Course[]
+  enrollments Enrollment[]
+  progress Progress[]
+  attempts QuizAttempt[]
+  supportRequests SupportRequest[]
+}
+model Category {
+  id String @id @default(uuid())
+  name String @unique
+  description String?
+  courses Course[]
+}
+model Course {
+  id String @id @default(uuid())
+  title String
+  description String
+  cover String?
+  status CourseStatus @default(PENDING)
+  professorId String
+  categoryId String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  professor User @relation(fields: [professorId], references: [id])
+  category Category @relation(fields: [categoryId], references: [id])
+  modules Module[]
+  enrollments Enrollment[]
+}
+model Module {
+  id String @id @default(uuid())
+  title String
+  description String?
+  courseId String
+  order Int
+  course Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  lessons Lesson[]
+  quizzes Quiz[]
+  @@unique([courseId, order])
+}
+model Lesson {
+  id String @id @default(uuid())
+  title String
+  description String?
+  videoUrl String
+  duration Int
+  moduleId String
+  order Int
+  module Module @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  progress Progress[]
+  @@unique([moduleId, order])
+}
+model Enrollment {
+  id String @id @default(uuid())
+  userId String
+  courseId String
+  enrolledAt DateTime @default(now())
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  course Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  @@unique([userId, courseId])
+}
+model Progress {
+  id String @id @default(uuid())
+  userId String
+  lessonId String
+  completed Boolean @default(false)
+  watchedSeconds Int @default(0)
+  completedAt DateTime?
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lesson Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  @@unique([userId, lessonId])
+}
+model Quiz {
+  id String @id @default(uuid())
+  title String
+  moduleId String
+  module Module @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  questions Question[]
+  attempts QuizAttempt[]
+}
+model Question {
+  id String @id @default(uuid())
+  question String
+  quizId String
+  quiz Quiz @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  options Option[]
+}
+model Option {
+  id String @id @default(uuid())
+  text String
+  correct Boolean @default(false)
+  questionId String
+  question Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+}
+model QuizAttempt {
+  id String @id @default(uuid())
+  userId String
+  quizId String
+  score Int
+  total Int
+  createdAt DateTime @default(now())
+  user User @relation(fields: [userId], references: [id])
+  quiz Quiz @relation(fields: [quizId], references: [id])
+}
+model SupportRequest {
+  id String @id @default(uuid())
+  userId String
+  subject String
+  description String
+  priority Priority
+  status SupportStatus @default(OPEN)
+  deadline DateTime
+  createdAt DateTime @default(now())
+  user User @relation(fields: [userId], references: [id])
+}
+model IdempotencyRecord {
+  id String @id @default(uuid())
+  key String
+  userId String
+  method String
+  path String
+  statusCode Int
+  response Json
+  createdAt DateTime @default(now())
+  @@unique([key, userId, method, path])
+}

@@ -1,0 +1,26 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: prisma_lms
+    ports: ["5432:5432"]
+    volumes: ["pgdata:/var/lib/postgresql/data"]
+  mongo:
+    image: mongo:7
+    ports: ["27017:27017"]
+    volumes: ["mongodata:/data/db"]
+  api:
+    build: .
+    depends_on: [postgres, mongo]
+    environment:
+      PORT: 3000
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/prisma_lms
+      MONGO_URL: mongodb://mongo:27017/prisma_lms
+      JWT_SECRET: desenvolvimento-prisma-lms-trocar-em-producao
+      JWT_EXPIRES_IN: 1d
+    ports: ["3000:3000"]
+volumes:
+  pgdata:
+  mongodata:

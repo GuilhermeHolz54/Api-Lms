@@ -1,0 +1,2 @@
+import {ErrorRequestHandler} from 'express'; import {AppError} from '../utils/problem';
+export const errorHandler:ErrorRequestHandler=(err,req,res,_next)=>{const e=err instanceof AppError?err:new AppError(500,'Erro interno','Ocorreu um erro interno no servidor'); res.status(e.status).type('application/problem+json').json({type:e.type==='about:blank'?`https://api.prisma.local/errors/${e.status}`:e.type,title:e.title,status:e.status,detail:e.detail,instance:req.originalUrl,requestId:(req as any).requestId});};

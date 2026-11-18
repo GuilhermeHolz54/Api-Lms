@@ -29,6 +29,10 @@ app.get('/',(_req,res)=>res.json({
  openapi:'/openapi.json',
 }));
 app.get('/health',(_req,res)=>res.json({status:'ok',service:'prisma-lms-api'}));
+app.get('/healthz',(_req,res)=>res.status(200).json({
+  status:'ok',
+  service:'prisma-lms-api',
+}));
 app.get('/openapi.json',(_req,res)=>res.json(swagger));
 app.use('/api-docs',swaggerUi.serve,swaggerUi.setup(swagger,{customSiteTitle:'PRISMA LMS API'}));
 app.use(routes);

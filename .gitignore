@@ -1,0 +1,18 @@
+# Variaveis de ambiente
+.env
+.env.*
+!.env.example
+
+# Dependencias e compilacao
+node_modules/
+dist/
+coverage/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Sistema e editor
+.DS_Store
+Thumbs.db
+.vscode/

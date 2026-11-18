@@ -1,0 +1,2 @@
+import {RequestHandler} from 'express'; import * as auth from '../services/auth.service'; import {registerSchema,loginSchema} from '../schemas/common';
+export const register:RequestHandler=async(req,res,next)=>{try{res.status(201).json(await auth.register(registerSchema.parse(req.body)));}catch(e){next(e)}}; export const login:RequestHandler=async(req,res,next)=>{try{res.json(await auth.login(loginSchema.parse(req.body)));}catch(e){next(e)}};

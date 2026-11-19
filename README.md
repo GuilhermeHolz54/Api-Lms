@@ -64,3 +64,16 @@ Envie `Idempotency-Key` entre 8 e 128 caracteres nas operações críticas docum
 ## Segurança e produção
 
 Não versionar `.env`. Em produção use `NODE_ENV=production`, um `JWT_SECRET` forte e URLs gerenciadas para PostgreSQL/MongoDB. Habilite HTTPS no proxy ou plataforma de publicação. Os bancos locais estão limitados a `127.0.0.1` no Compose.
+
+
+
+
+API: https://api-lms-wjmw.onrender.com
+
+
+
+Documentação Swagger: https://api-lms-wjmw.onrender.com/api-docs
+
+
+
+Verificação: https://api-lms-wjmw.onrender.com/healthz
